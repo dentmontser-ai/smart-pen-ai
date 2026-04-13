@@ -1,10 +1,9 @@
 import uvicorn
-from fastapi import FastAPI, Form, UploadFile, File, HTTPException
+from fastapi import FastAPI, Form, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import datetime
-from typing import Optional
 
 # --- Import file generation libraries ---
 from docx import Document
@@ -21,95 +20,73 @@ app.add_middleware(
 )
 
 # --- File Storage Setup ---
-# This directory will store the generated files
-OUTPUT_DIR = "generated_files"
+# Create a directory named 'public' to store files.
+# We will serve this directory as a static folder.
+OUTPUT_DIR = "public"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# --- Mount the static directory to serve files ---
-# Any file in OUTPUT_DIR will be accessible via the /files URL path
-app.mount("/files", StaticFiles(directory=OUTPUT_DIR), name="files")
-
-# We need to add the font file to the project and upload it to GitHub
-FONT_FILE_PATH = "DejaVuSans.ttf"
+# --- Mount the static directory ---
+# Any file in 'public' will be accessible from the root URL.
+# e.g., https://smart-pen-ai.onrender.com/order_123.pdf
+app.mount("/", StaticFiles(directory=OUTPUT_DIR), name="public")
 
 # --- AI Placeholder Function ---
-def generate_ai_content(service: str, details: str, lang: str) -> str:
-    # This is the "A to Z" comprehensive content generation logic we discussed.
-    # For now, it's a placeholder, but we will replace it with a real AI chain.
-    
-    # 1. The Planner (Create an outline)
-    outline = f"خطة محتوى شاملة لموضوع '{details}':\n1. مقدمة\n2. تحليل معمق\n3. تطبيقات عملية\n4. خاتمة"
-    
-    # 2. The Writer (Expand on the outline)
-    written_content = f"بناءً على الخطة، هذا هو المحتوى المفصل الذي يغطي الموضوع من كل الجوانب.\nالخدمة المطلوبة: {service}\nاللغة: {lang}"
-    
-    # 3. The Editor (Review and format)
-    final_text = f"--- مستند احترافي من Smart Pen ---\n\n{outline}\n\n{written_content}\n\n--- تم الإنشاء بواسطة Manus AI ---"
-    
-    return final_text
+def generate_ai_content(service: str, details: str) -> str:
+    return f"--- مستند احترافي من Smart Pen ---\n\nالخدمة المطلوبة: {service}\n\nالتفاصيل: {details}\n\n--- تم الإنشاء بواسطة Manus AI ---"
 
 # --- File Generation Functions ---
-def create_docx_file(content: str, filename: str):
+def create_file(content: str, filename: str, format_type: str):
     filepath = os.path.join(OUTPUT_DIR, filename)
-    document = Document()
-    # Here we would apply the elegant template (headers, footers, etc.)
-    document.settings.element.xpath('.//w:bidi')[0].set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '1')
-    for line in content.split('\n'):
-        p = document.add_paragraph(line)
+    
+    if format_type == "docx":
+        document = Document()
+        document.settings.element.xpath('.//w:bidi')[0].set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '1')
+        p = document.add_paragraph(content)
         p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    document.save(filepath)
-    return filepath
-
-def create_pdf_file(content: str, filename: str):
-    filepath = os.path.join(OUTPUT_DIR, filename)
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.add_font('DejaVu', '', FONT_FILE_PATH, uni=True)
-    pdf.set_font('DejaVu', '', 12)
-    pdf.set_right_to_left(True)
-    pdf.multi_cell(0, 10, content)
-    pdf.output(filepath)
+        document.save(filepath)
+    elif format_type == "pdf":
+        # Check if the font file exists before proceeding
+        font_path = "DejaVuSans.ttf"
+        if not os.path.exists(font_path):
+            raise FileNotFoundError("Font file 'DejaVuSans.ttf' not found. Please upload it to the repository.")
+            
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.add_font('DejaVu', '', font_path, uni=True)
+        pdf.set_font('DejaVu', '', 12)
+        pdf.set_right_to_left(True)
+        pdf.multi_cell(0, 10, content)
+        pdf.output(filepath)
+    
     return filepath
 
 # --- API Endpoint ---
 @app.post("/process-order")
 async def process_order(
-    details: str = Form(...), service: str = Form(...), lang: str = Form(...),
-    format: str = Form(...), email: str = Form(...)
+    details: str = Form(...), service: str = Form(...), format: str = Form(...)
 ):
-    print(f"Received new order for: {email}")
+    print(f"Received new order. Service: {service}, Format: {format}")
 
-    ai_content = generate_ai_content(service, details, lang)
+    ai_content = generate_ai_content(service, details)
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     
-    file_extension = ""
-    if "Word (DOCX)" in format:
-        file_extension = "docx"
-    elif "PDF" in format:
-        file_extension = "pdf"
-    else:
-        raise HTTPException(status_code=400, detail="Unsupported file format.")
-
+    file_extension = "docx" if "Word" in format else "pdf"
     filename = f"order_{timestamp}.{file_extension}"
     
     try:
-        if file_extension == "docx":
-            file_path = create_docx_file(ai_content, filename)
-        elif file_extension == "pdf":
-            file_path = create_pdf_file(ai_content, filename)
+        create_file(ai_content, filename, file_extension)
     except Exception as e:
         print(f"ERROR creating file: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to create file: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
     # Construct the public download URL
-    # IMPORTANT: Replace with your actual Render URL
     base_url = "https://smart-pen-ai.onrender.com" 
-    download_url = f"{base_url}/files/{filename}"
+    download_url = f"{base_url}/{filename}"
 
-    print(f"SUCCESS: File '{filename}' created. Download URL: {download_url}")
+    print(f"SUCCESS: File '{filename}' created. URL: {download_url}")
     
     return {
-        "message": f"تم إنشاء طلبك بنجاح! يمكنك تحميله الآن.",
+        "message": "تم إنشاء طلبك بنجاح! يمكنك تحميله الآن.",
         "download_url": download_url
     }
 
