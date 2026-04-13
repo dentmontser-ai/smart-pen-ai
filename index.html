@@ -138,7 +138,8 @@
             const a = new FormData;
             a.append("details", t), a.append("service", l), a.append("lang", n), a.append("format", o), a.append("email", s), fileInput.files.length > 0 && a.append("attachment", fileInput.files[0]);
             try {
-                const d = await fetch("http://127.0.0.1:8000/process-order", { method: "POST", body: a }), r = await d.json();
+                const d = await fetch("https://smart-pen-ai.onrender.com/process-order", { method: "POST", body: a });
+                const r = await d.json();
                 if (d.ok) showModal("✅ تم بنجاح", r.message), orderForm.reset(), fileStatus.textContent = "", attachBtn.style.display = "flex", fileLoader.style.display = "none", fileSuccess.style.display = "none";
                 else throw new Error(r.detail || "حدث خطأ غير متوقع.")
             } catch (i) { showModal("❌ حدث خطأ", "لا يمكن الوصول للخادم حالياً. الرجاء المحاولة لاحقاً."), console.error("Error:", i) } finally { submitBtn.classList.remove("loading"), submitBtn.textContent = "تأكيد الطلب", submitBtn.disabled = !1 }
