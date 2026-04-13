@@ -1,0 +1,10 @@
+
+
+
+fastapi
+uvicorn
+python-multipart
+python-docx
+reportlab
+arabic_reshaper
+python-bidi
