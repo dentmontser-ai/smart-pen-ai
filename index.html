@@ -7,48 +7,275 @@
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap");
         @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap");
-        :root { --primary-purple: #7B68EE; --dark-purple: #483D8B; --accent-gold: #FFD700; --bg-white: #FFFFFF; --text-dark: #2c3e50; --error-red: #e74c3c; --success-green: #2ecc71; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; font-family: 'Cairo', sans-serif; background-color: var(--primary-purple); }
-        body { display: flex; flex-direction: column; }
-        .hero-section { flex: 0 0 32%; background-color: var(--primary-purple); color: white; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; border-bottom-left-radius: 50% 30px; border-bottom-right-radius: 50% 30px; z-index: 5; }
-        .site-title { font-family: 'Dancing Script', cursive; font-size: 7vh; color: var(--accent-gold); margin: 0; line-height: 1; }
-        .main-content { flex: 1; background-color: var(--bg-white); margin-top: -20px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); overflow-y: auto; }
-        .form-title { text-align: center; font-weight: 900; font-size: 2.2vh; margin: 5px 0 8px 0; color: var(--text-dark); }
-        form { display: flex; flex-direction: column; height: 100%; justify-content: space-between; }
-        #details { width: 100%; height: 15vh; padding: 10px; border: 1.5px solid #e0e0e0; border-radius: 15px; font-family: 'Cairo', sans-serif; font-size: 1.7vh; resize: none; outline: none; }
-        #email { width: 100%; padding: 8px 15px; border: 1.5px solid #e0e0e0; border-radius: 10px; font-family: 'Cairo', sans-serif; font-size: 1.6vh; outline: none; margin-bottom: 5px; }
-        .select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background-color: var(--primary-purple); padding: 8px; border-radius: 15px; margin-bottom: 5px; }
-        .full-width { grid-column: 1 / -1; }
-        .custom-select select { width: 100%; padding: 8px 10px; border: none; border-radius: 10px; background-color: white; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 1.6vh; appearance: none; -webkit-appearance: none; outline: none; cursor: pointer; }
-        .submit-area { text-align: center; padding-bottom: 10px; }
-        .btn-confirm { width: 85%; max-width: 320px; height: 6.5vh; background-color: var(--primary-purple); color: white; border: none; border-radius: 50px; font-size: 2.8vh; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto; transition: transform 0.2s, background-color 0.3s; text-decoration: none; }
-        .btn-confirm.loading { background-color: var(--dark-purple); cursor: not-allowed; }
-        .error-box { color: var(--error-red); font-size: 1.3vh; text-align: center; height: 1.5vh; margin-top: 4px; visibility: hidden; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
-        .modal-overlay.visible { opacity: 1; visibility: visible; }
-        .modal-content { background: white; padding: 25px; border-radius: 15px; text-align: center; width: 85%; max-width: 350px; transform: scale(0.9); transition: transform 0.3s; }
-        .modal-overlay.visible .modal-content { transform: scale(1); }
-        .modal-title { font-size: 2.5vh; font-weight: 900; color: var(--primary-purple); margin-bottom: 15px; }
-        .modal-body { font-size: 1.8vh; color: var(--text-dark); margin-bottom: 20px; line-height: 1.6; }
-        .modal-btn { display: inline-block; text-decoration: none; padding: 12px 30px; border-radius: 25px; font-size: 1.8vh; font-weight: 700; cursor: pointer; margin: 5px; }
-        .modal-download-btn { background: var(--success-green); color: white; }
-        .modal-close-btn { background: #ccc; color: #333; }
+        
+        :root {
+            --primary-purple: #7B68EE;
+            --dark-purple: #483D8B;
+            --accent-gold: #FFD700;
+            --bg-white: #FFFFFF;
+            --text-dark: #2c3e50;
+            --error-red: #e74c3c;
+            --success-green: #2ecc71;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--primary-purple);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-section {
+            flex: 0 0 32%;
+            background-color: var(--primary-purple);
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            border-bottom-left-radius: 50% 30px;
+            border-bottom-right-radius: 50% 30px;
+            z-index: 5;
+        }
+
+        .site-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 7vh;
+            color: var(--accent-gold);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .main-content {
+            flex: 1;
+            background-color: var(--bg-white);
+            margin-top: -20px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .form-title {
+            text-align: center;
+            font-weight: 900;
+            font-size: 2.2vh;
+            margin: 5px 0 8px 0;
+            color: var(--text-dark);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: space-between;
+        }
+
+        #details {
+            width: 100%;
+            height: 15vh;
+            padding: 10px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 15px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.7vh;
+            resize: none;
+            outline: none;
+        }
+
+        #email {
+            width: 100%;
+            padding: 8px 15px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.6vh;
+            outline: none;
+            margin-bottom: 5px;
+        }
+
+        .select-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            background-color: var(--primary-purple);
+            padding: 8px;
+            border-radius: 15px;
+            margin-bottom: 5px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .custom-select select {
+            width: 100%;
+            padding: 8px 10px;
+            border: none;
+            border-radius: 10px;
+            background-color: white;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            font-size: 1.6vh;
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .submit-area {
+            text-align: center;
+            padding-bottom: 10px;
+        }
+
+        .btn-confirm {
+            width: 85%;
+            max-width: 320px;
+            height: 6.5vh;
+            background-color: var(--primary-purple);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 2.8vh;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            transition: transform 0.2s, background-color 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-confirm.loading {
+            background-color: var(--dark-purple);
+            cursor: not-allowed;
+        }
+
+        .error-box {
+            color: var(--error-red);
+            font-size: 1.3vh;
+            text-align: center;
+            height: 1.5vh;
+            margin-top: 4px;
+            visibility: hidden;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            width: 85%;
+            max-width: 350px;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 2.5vh;
+            font-weight: 900;
+            color: var(--primary-purple);
+            margin-bottom: 15px;
+        }
+
+        .modal-body {
+            font-size: 1.8vh;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.8vh;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .modal-download-btn {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .modal-close-btn {
+            background: #ccc;
+            color: #333;
+        }
     </style>
 </head>
 <body>
-    <header class="hero-section">...</header>
+
+    <header class="hero-section">
+        <h1 class="site-title">Smart Pen</h1>
+        <p style="font-size: 1.5vh; margin: 5px 0;">ACADEMIC SERVICES</p>
+        <p style="font-size: 1.8vh; color: var(--accent-gold); font-weight: bold;">شريكك الموثوق في رحلتك الأكاديمية</p>
+    </header>
+
     <main class="main-content">
         <h2 class="form-title">تفاصيل الطلب الكاملة</h2>
+        
         <form id="orderForm" onsubmit="return false;">
             <textarea id="details" placeholder="الرجاء ذكر تفاصيل الطلب..."></textarea>
+            
             <input type="email" id="email" placeholder="بريدك الإلكتروني" required>
+            
             <div class="select-grid">
                 <div class="custom-select">
                     <select id="service" required>
                         <option value="" disabled selected>نوع الخدمة</option>
                         <option value="كتابة محتوى">كتابة محتوى</option>
                         <option value="تلخيص">تلخيص</option>
+                        <option value="بحث أكاديمي">بحث أكاديمي</option>
                     </select>
                 </div>
                 <div class="custom-select">
@@ -62,16 +289,19 @@
                     <select id="format" required>
                         <option value="" disabled selected>نوع الملف</option>
                         <option value="Word (DOCX)">Word (DOCX)</option>
-                        <option value="PDF">PDF</option>
                     </select>
                 </div>
             </div>
+
             <div id="main-error" class="error-box">الرجاء إكمال جميع الحقول</div>
+
             <div class="submit-area">
                 <button id="submitBtn" class="btn-confirm">تأكيد الطلب</button>
             </div>
         </form>
     </main>
+
+    <!-- Modal for Success/Error -->
     <div class="modal-overlay" id="responseModal">
         <div class="modal-content">
             <h3 id="modalTitle" class="modal-title"></h3>
@@ -81,9 +311,16 @@
             </div>
         </div>
     </div>
+
     <script>
-        const submitBtn = document.getElementById("submitBtn"), orderForm = document.getElementById("orderForm"), mainError = document.getElementById("main-error"), responseModal = document.getElementById("responseModal"), modalTitle = document.getElementById("modalTitle"), modalBody = document.getElementById("modalBody"), modalButtons = document.getElementById("modal-buttons");
-        
+        const submitBtn = document.getElementById("submitBtn");
+        const orderForm = document.getElementById("orderForm");
+        const mainError = document.getElementById("main-error");
+        const responseModal = document.getElementById("responseModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalBody = document.getElementById("modalBody");
+        const modalButtons = document.getElementById("modal-buttons");
+
         function showModal(title, body, downloadUrl = null) {
             modalTitle.textContent = title;
             modalBody.textContent = body;
@@ -94,7 +331,7 @@
                 downloadBtn.href = downloadUrl;
                 downloadBtn.textContent = 'تحميل الملف الآن';
                 downloadBtn.className = 'modal-btn modal-download-btn';
-                downloadBtn.target = '_blank'; // Open in new tab
+                downloadBtn.target = '_blank';
                 modalButtons.appendChild(downloadBtn);
             }
 
@@ -109,6 +346,7 @@
 
         submitBtn.addEventListener("click", async function(e) {
             e.preventDefault();
+
             const details = document.getElementById("details").value.trim();
             const service = document.getElementById("service").value;
             const lang = document.getElementById("lang").value;
@@ -119,9 +357,10 @@
                 mainError.style.visibility = "visible";
                 return;
             }
+
             mainError.style.visibility = "hidden";
             submitBtn.classList.add("loading");
-            submitBtn.textContent = "جاري الإنشاء...";
+            submitBtn.textContent = "جاري المعالجة...";
             submitBtn.disabled = true;
 
             const formData = new FormData();
@@ -132,18 +371,24 @@
             formData.append("email", email);
 
             try {
-                const response = await fetch("https://smart-pen-ai.onrender.com/process-order", { method: "POST", body: formData });
+                // ملاحظة: تأكد من أن هذا الرابط يطابق رابط Render الخاص بك
+                const response = await fetch("https://smart-pen-ai.onrender.com/process-order", {
+                    method: "POST",
+                    body: formData
+                });
+
                 const result = await response.json();
-                
+
                 if (response.ok) {
                     showModal("✅ تم بنجاح", result.message, result.download_url);
                     orderForm.reset();
                 } else {
                     throw new Error(result.detail || "حدث خطأ في الخادم.");
                 }
+
             } catch (error) {
-                showModal("❌ حدث خطأ", "لا يمكن الوصول للخادم أو معالجة الطلب. الرجاء المحاولة لاحقاً.");
-                console.error("Error:", error);
+                console.error("Fetch Error:", error);
+                showModal("❌ حدث خطأ", "لا يمكن الوصول للخادم حالياً. يرجى التأكد من أن خادم Render يعمل بنجاح.");
             } finally {
                 submitBtn.classList.remove("loading");
                 submitBtn.textContent = "تأكيد الطلب";
@@ -151,5 +396,6 @@
             }
         });
     </script>
+
 </body>
 </html>
